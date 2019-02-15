@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">VideoCall</string>
+    <string name="tv_signup">Sign Up Here</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Login</string>
+    <string name="button_signup">Sign Up</string>
+    <string name="tv_loginhere">Login Here</string>
+    <string name="tv_maintitle">VideoCall Prototype</string>
+</resources>
