@@ -15,12 +15,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToLogin(View view) {
-        Intent registerIntent = new Intent(this, LoginActivity.class);
-        startActivity(registerIntent);
+        Intent LoginIntent = new Intent(this, LoginActivity.class);
+        startActivity(LoginIntent);
     }
 
     public void goToSignUp(View view) {
         Intent registerIntent = new Intent(this, RegistrationActivity.class);
         startActivity(registerIntent);
+    }
+
+    public void test(View view) {
+        Intent l = new Intent(this, VideoCallActivity.class);
+        startActivity(l);
     }
 }

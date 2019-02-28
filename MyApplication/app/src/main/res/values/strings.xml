@@ -7,4 +7,19 @@
     <string name="button_signup">Sign Up</string>
     <string name="tv_loginhere">Login Here</string>
     <string name="tv_maintitle">VideoCall Prototype</string>
+    <string name="tv_welcomemsg">Welcome</string>
+    <string name="tv_name">Name</string>
+    <string name="tv_pharmacy_address">Pharmacy Address</string>
+    <string name="tv_address">Address</string>
+    <string name="tv_phone">Phone</string>
+    <string name="tv_email">Email</string>
+    <string name="name_hint">Name</string>
+    <string name="phone_hint">Phone</string>
+    <string name="address_hint">Address</string>
+    <string name="tv_already_registered">Already Registered? Click here to Login.</string>
+    <string name="button_logout">Logout</string>
+    <string name="tv_profile">Profile</string>
+    <string name="welcome_title">Welcome</string>
+    <string name="call_button">View Available Doctors</string>
+    <string name="pharmacy_button">Pharmacy Locator</string>
 </resources>

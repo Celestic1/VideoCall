@@ -18,21 +18,28 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegistrationActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private EditText regEmail, regPassword;
-    private static final String TAG = "EmailPassword";
+    private EditText regEmail, regPassword, regPhone, regName, regAddress;
+    private String name;
+    private String email;
+    private String phone;
+    private String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         regEmail = findViewById(R.id.reg_email);
         regPassword = findViewById(R.id.reg_password);
-
+        regName = findViewById(R.id.reg_name);
+        regPhone = findViewById(R.id.reg_phone);
+        regAddress = findViewById(R.id.reg_address);
     }
 
     public void signup(View view) {
@@ -49,9 +56,9 @@ public class RegistrationActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+                            // Sign in success
+                            postUserData();
                             Toast.makeText(RegistrationActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
                         }
                         else {
                             Toast.makeText(RegistrationActivity.this, "User Authentication Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -60,10 +67,19 @@ public class RegistrationActivity extends AppCompatActivity {
                 });
     }
 
+    private void postUserData(){
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        User user = new User(name, email, phone, address);
+
+        mDatabase.child("Users").child(mAuth.getUid()).setValue(user);
+    }
+
     private boolean validate(){
+
         boolean valid = true;
 
-        String email = regEmail.getText().toString();
+        email = regEmail.getText().toString();
         if (TextUtils.isEmpty(email)) {
             regEmail.setError("Required.");
             valid = false;
@@ -78,17 +94,35 @@ public class RegistrationActivity extends AppCompatActivity {
         } else {
             regPassword.setError(null);
         }
+
+        name = regName.getText().toString();
+        if (TextUtils.isEmpty(name)) {
+            regName.setError("Required.");
+            valid = false;
+        } else {
+            regName.setError(null);
+        }
+
+        phone = regPhone.getText().toString();
+        if (TextUtils.isEmpty(phone)) {
+            regPhone.setError("Required.");
+            valid = false;
+        } else {
+            regPhone.setError(null);
+        }
+
+        address = regAddress.getText().toString();
+        if (TextUtils.isEmpty(address)) {
+            regAddress.setError("Required.");
+            valid = false;
+        } else {
+            regAddress.setError(null);
+        }
+
         return valid;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void toLogin(View view) {
+        startActivity(new Intent(this, LoginActivity.class));
     }
 }

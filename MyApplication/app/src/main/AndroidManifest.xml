@@ -11,47 +11,33 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity android:name=".WelcomeActivity"></activity>
         <activity
             android:name=".VideoCallActivity"
             android:configChanges="orientation"
-            android:parentActivityName="com.raymondliang.myapplication.LoginActivity" >
+            android:parentActivityName=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".LoginActivity"
-            android:parentActivityName="com.raymondliang.myapplication.MainActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            android:name=".LoginActivity">
         </activity>
-
         <activity
-            android:name=".RegistrationActivity"
-            android:parentActivityName="com.raymondliang.myapplication.MainActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            android:name=".RegistrationActivity">
         </activity>
-
-        <activity
-            android:name=".MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".ProfileActivity">
+        </activity>
     </application>
 
 </manifest>
