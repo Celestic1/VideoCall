@@ -70,7 +70,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private void postUserData(){
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        User user = new User(name, email, phone, address);
+        User user = new User(name, email, phone, address, false);
 
         mDatabase.child("Users").child(mAuth.getUid()).setValue(user);
     }

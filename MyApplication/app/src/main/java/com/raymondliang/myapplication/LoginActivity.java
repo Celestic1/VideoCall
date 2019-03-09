@@ -20,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private EditText mEmail, mPassword;
+    private String email, password;
     private static final String TAG = "EmailPassword";
 
     @Override
@@ -27,17 +28,23 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        if (savedInstanceState != null) {
+            email = savedInstanceState.getString("UserEmail");
+            password = savedInstanceState.getString("UserPassword");
+        }
         mEmail = findViewById(R.id.tv_email);
         mPassword = findViewById(R.id.tv_password);
     }
 
     public void login(View view) {
         mAuth = FirebaseAuth.getInstance();
-        String email = mEmail.getText().toString();
-        String password = mPassword.getText().toString();
+        email = mEmail.getText().toString();
+        password = mPassword.getText().toString();
+        //email = "rliang1994@gmail.com";
+        //password = "raymond";
 
         if(!validate()){
-            return;
+             return;
         }
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -45,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            //FirebaseUser user = mAuth.getCurrentUser();
                             startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
                         } else {
                             // If sign in fails, display a message to the user.
@@ -75,5 +81,31 @@ public class LoginActivity extends AppCompatActivity {
             mPassword.setError(null);
         }
         return valid;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("UserEmail", mEmail.getText().toString());
+        outState.putString("UserPassword", mPassword.getText().toString());
+        super.onSaveInstanceState(outState);
+    }
+
+    public void testLogin(View view) {
+        mAuth = FirebaseAuth.getInstance();
+        email = "rliang1994@gmail.com";
+        password = "raymond";
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

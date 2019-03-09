@@ -20,6 +20,7 @@
     <string name="button_logout">Logout</string>
     <string name="tv_profile">Profile</string>
     <string name="welcome_title">Welcome</string>
-    <string name="call_button">View Available Doctors</string>
+    <string name="call_button">View Registered Users</string>
     <string name="pharmacy_button">Pharmacy Locator</string>
+    <string name="status_button">Change Status</string>
 </resources>

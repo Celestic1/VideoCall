@@ -11,16 +11,18 @@ public class User implements Serializable {
     private String Email;
     private String Phone;
     private String Address;
+    private Boolean Available;
 
     public User(){
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String Name, String Email, String Phone, String Address) {
+    public User(String Name, String Email, String Phone, String Address, Boolean Available) {
         this.Name = Name;
         this.Email = Email;
         this.Phone = Phone;
         this.Address = Address;
+        this.Available = Available;
     }
 
     public void setUserName(String name){
@@ -52,4 +54,8 @@ public class User implements Serializable {
     public String getUserAddress(){
         return Address;
     }
+
+    public void setAvailability(Boolean available) { this.Available = available; }
+
+    public Boolean getAvailability() { return Available; }
 }

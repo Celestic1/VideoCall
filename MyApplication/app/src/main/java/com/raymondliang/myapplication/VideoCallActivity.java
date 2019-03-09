@@ -1,18 +1,22 @@
 package com.raymondliang.myapplication;
 
-import android.content.Intent;
-import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.opentok.android.BaseVideoRenderer;
+import com.opentok.android.Connection;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Publisher;
@@ -31,11 +35,15 @@ import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-public class VideoCallActivity extends AppCompatActivity implements  Session.SessionListener, PublisherKit.PublisherListener, SubscriberKit.SubscriberListener{
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
+public class VideoCallActivity extends AppCompatActivity implements  Session.SessionListener, PublisherKit.PublisherListener, SubscriberKit.SubscriberListener, Session.SignalListener{
+
+    private static final String TAG = "VideoCallActivity";
     private static String API_KEY = "46265502";
     private static String SESSION_ID = "1_MX40NjI2NTUwMn5-MTU1MDIxMjkzNTQ2NH4zd3R1ZTh1ZkV2dVRnZmF0Z0sxVEZoTVF-fg";
-    private static String TOKEN = "T1==cGFydG5lcl9pZD00NjI2NTUwMiZzaWc9ZmY0YTIwYjhhM2FmMzE5ZTg3YjQ2YTdjODViMzE3YzAxMzhkNDFiNDpzZXNzaW9uX2lkPTFfTVg0ME5qSTJOVFV3TW41LU1UVTFNREl4TWprek5UUTJOSDR6ZDNSMVpUaDFaa1YyZFZSblptRjBaMHN4VkVab1RWRi1mZyZjcmVhdGVfdGltZT0xNTUwMjE5NzYxJm5vbmNlPTAuMDg2ODA1OTk5Mzg5Nzg4OTUmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTU1MDgyNDYzNSZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
+    private static String TOKEN = "T1==cGFydG5lcl9pZD00NjI2NTUwMiZzaWc9YTc3OTM3ODU2ODI0OWJjODdkZGZmYWJiYTBiMmY2ZGY4YTRkMGVjOTpzZXNzaW9uX2lkPTFfTVg0ME5qSTJOVFV3TW41LU1UVTFNREl4TWprek5UUTJOSDR6ZDNSMVpUaDFaa1YyZFZSblptRjBaMHN4VkVab1RWRi1mZyZjcmVhdGVfdGltZT0xNTUyMDk3Njk2Jm5vbmNlPTAuOTU2NDM0MDMyNTg5MzczNyZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNTUyMTAxMjk1JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9";
 
     private static final String LOG_TAG = VideoCallActivity.class.getSimpleName();
     private static final int RC_VIDEO_APP_PERM = 124;
@@ -47,9 +55,11 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
     private FloatingActionButton cameraflipfab;
     private FloatingActionButton videotogglefab;
     private FloatingActionButton mictogglefab;
+    private FloatingActionButton callendfab;
     boolean videoflag = true;
     boolean micflag = true;
     private Chronometer calltimer;
+    private User currUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +72,23 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
         cameraflipfab = findViewById(R.id.switch_camera_action_fab);
         videotogglefab = findViewById(R.id.local_video_action_fab);
         mictogglefab = findViewById(R.id.mute_action_fab);
+        callendfab = findViewById(R.id.end_call_fab);
         calltimer = findViewById(R.id.calltimetracker);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            retrieveUserInfo(uid);
+        }
 
         requestPermissions();
 
-        // Enable changing the volume using the up/down keys during a conversation
-        //setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+        callendfab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         cameraflipfab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +133,24 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
         });
     }
 
+    private void retrieveUserInfo(final String userId) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Users").child(userId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        // Get user value
+                        currUser = dataSnapshot.getValue(User.class);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                    }
+                });
+    }
+
     /* Activity lifecycle methods */
 
     @Override
@@ -139,6 +178,13 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
         }
     }
 
+    @Override
+    protected void onDestroy(){
+        Log.d(LOG_TAG, "onDestroy");
+
+        super.onDestroy();
+    }
+
     // request permissions
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -163,6 +209,7 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
 
         mSession = new Session.Builder(this, apiKey, sessionId).build();
         mSession.setSessionListener(this);
+        mSession.setSignalListener(this);
         mSession.connect(token);
     }
 
@@ -173,9 +220,8 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
         Log.d(LOG_TAG, "Session Connected");
 
         // initialize Publisher and set this object to listen to Publisher events
-        mPublisher = new Publisher.Builder(this).build();
+        mPublisher = new Publisher.Builder(this).name(currUser.getUserName()).build();
         mPublisher.setPublisherListener(this);
-
         // set publisher video style to fill view
         mPublisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
                 BaseVideoRenderer.STYLE_VIDEO_FILL);
@@ -184,6 +230,7 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
             ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
         }
         mSession.publish(mPublisher);
+
     }
 
     @Override
@@ -201,6 +248,7 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
             mSubscriber.setSubscriberListener(this);
             mSession.subscribe(mSubscriber);
             mSubscriberViewContainer.addView(mSubscriber.getView());
+            calltimer.setBase(SystemClock.elapsedRealtime());
             calltimer.start();
         }
     }
@@ -210,9 +258,14 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
         Log.i(LOG_TAG, "Stream Dropped");
 
         if (mSubscriber != null) {
+            Log.d(TAG, "in stream dropped loop");
             mSubscriber = null;
             mSubscriberViewContainer.removeAllViews();
+            calltimer.stop();
+            long timeEplapsed = SystemClock.elapsedRealtime() - calltimer.getBase();
+            Toast.makeText(this, "Elapsed Call Time: " + convertTime(timeEplapsed), Toast.LENGTH_LONG).show();
         }
+        //finish();
     }
 
     @Override
@@ -228,12 +281,13 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
     @Override
     public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
         Log.d(LOG_TAG, "onStreamCreated: Publisher Stream Created. Own stream "+stream.getStreamId());
+        Log.d(TAG, "Publisher name: " + mPublisher.getName());
     }
 
     @Override
     public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
         Log.d(LOG_TAG, "onStreamDestroyed: Publisher Stream Destroyed. Own stream "+stream.getStreamId());
-        mPublisher = null;
+        mSession.unpublish(mPublisher);
         mPublisherViewContainer.removeAllViews();
     }
 
@@ -252,11 +306,11 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
     public void onConnected(SubscriberKit subscriberKit) {
 
         Log.d(LOG_TAG, "onConnected: Subscriber connected. Stream: "+subscriberKit.getStream().getStreamId());
+        Toast.makeText(this, "Connected to " + mPublisher.getName() + "'s call.", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onDisconnected(SubscriberKit subscriberKit) {
-
         Log.d(LOG_TAG, "onDisconnected: Subscriber disconnected. Stream: "+subscriberKit.getStream().getStreamId());
     }
 
@@ -275,5 +329,19 @@ public class VideoCallActivity extends AppCompatActivity implements  Session.Ses
         finish();
     }
 
+    @Override
+    public void onSignalReceived(Session session, String type, String data, Connection connection) {
+        String myConnectionId = session.getConnection().getConnectionId();
+        if (connection != null && connection.getConnectionId().equals(myConnectionId)) {
+            Toast toast = Toast.makeText(this, data, Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
 
+    private String convertTime(long millis){
+        String hms = String.format(Locale.getDefault(), "%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
+        return hms;
+    }
 }

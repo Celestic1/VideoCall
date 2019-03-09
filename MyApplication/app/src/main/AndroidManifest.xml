@@ -11,23 +11,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".WelcomeActivity"></activity>
+        <activity android:name=".PharmacyLocatorActivity"></activity>
+        <activity android:name=".UserListActivity" />
+        <activity android:name=".WelcomeActivity" />
         <activity
             android:name=".VideoCallActivity"
-            android:configChanges="orientation"
-            android:parentActivityName=".LoginActivity">
+            android:configChanges="orientation" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".LoginActivity">
-        </activity>
-        <activity
-            android:name=".RegistrationActivity">
-        </activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".RegistrationActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,9 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ProfileActivity">
-        </activity>
+        <activity android:name=".ProfileActivity" />
     </application>
 
 </manifest>
