@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">VideoCall</string>
+    <string name="tv_signup">Sign Up Here</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Sign In</string>
+    <string name="button_signup">Sign Up</string>
+    <string name="tv_loginhere">Log In</string>
+    <string name="tv_maintitle">Video Call</string>
+    <string name="tv_welcomemsg">Welcome</string>
+    <string name="tv_name">Name</string>
+    <string name="tv_pharmacy_address">Pharmacy Address</string>
+    <string name="tv_address">Address</string>
+    <string name="tv_phone">Phone</string>
+    <string name="tv_email">Email</string>
+    <string name="name_hint">Name</string>
+    <string name="phone_hint">Phone</string>
+    <string name="address_hint">Address</string>
+    <string name="tv_already_registered">Already Registered? Click here to Login.</string>
+    <string name="button_logout">Logout</string>
+    <string name="tv_profile">Profile</string>
+    <string name="welcome_title">Welcome</string>
+    <string name="call_button">View Registered Users</string>
+    <string name="pharmacy_button">Pharmacy Locator</string>
+    <string name="status_button">Change Status</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="default_notification_channel_name" translatable="true">VideoCall</string>
+    <string name="channel_description">Notification Channel</string>
+    <string name="channel_id">My_Channel_1</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+</resources>
