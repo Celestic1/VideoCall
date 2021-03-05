@@ -27,8 +27,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".WaitingRoomActivity" />
-        <activity
             android:name=".UserListActivity" />
         <activity
             android:name=".VideoCallActivity">

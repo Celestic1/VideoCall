@@ -21,34 +21,58 @@ import com.raymondliang.myapplication.Data.Doctor;
 
 import java.util.ArrayList;
 
-public class UserListActivity extends AppCompatActivity implements UserAdapter.UserAdapterOnClickHandler {
-
+public class UserListActivity extends AppCompatActivity {
     private static final String TAG = "UserListActivity";
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    public UserListActivity() {
+        super(R.layout.activity_user_list);
+    }
+
+    private RecyclerView recyclerView;
+    private UserAdapter adapter;
     private ArrayList<DoctorItem> doctorList = new ArrayList<>();
-    private SwipeRefreshLayout mSwipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_list);
 
-        mSwipeContainer = findViewById(R.id.swipeContainer);
+        SwipeRefreshLayout mSwipeContainer = findViewById(R.id.swipeContainer);
         mSwipeContainer.setOnRefreshListener(() -> {
             doctorList.clear();
-            mRecyclerView.removeAllViewsInLayout();
+            recyclerView.removeAllViewsInLayout();
             updateRecyclerView();
             //mSwipeContainer.setRefreshing(false);
         });
 
-        mRecyclerView = findViewById(R.id.recyclerView);
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
         updateRecyclerView();
-        mAdapter = new UserAdapter(doctorList, this);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(UserListActivity.this));
-        mRecyclerView.setAdapter(mAdapter);
+        adapter = new UserAdapter(doctorList, doctorItem -> {
+            DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Intent i = new Intent(this, VideoCallActivity.class);
+                        // TODO: Change this to retrieve session per the doctor remotely from FireBase
+                        i.putExtra(VideoCallActivity.SESSION_ID, "session");
+                        startActivity(i);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            if (doctorItem.availability) {
+                builder.setMessage("Start a call?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+            } else {
+                builder.setMessage("Doctor is offline, cannot call").setPositiveButton("OK", null).show();
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(UserListActivity.this));
+        recyclerView.setAdapter(adapter);
     }
 
     private void updateRecyclerView(){
@@ -69,7 +93,7 @@ public class UserListActivity extends AppCompatActivity implements UserAdapter.U
                                 doctorList.add(new DoctorItem(doctor.getName(), doctor.getAvailability(), null, R.drawable.ic_android));
                             }
                         }
-                        mAdapter.notifyDataSetChanged();
+                        adapter.notifyDataSetChanged();
 
                     }
 
@@ -78,25 +102,5 @@ public class UserListActivity extends AppCompatActivity implements UserAdapter.U
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
                     }
                 });
-    }
-
-    @Override
-    public void onClick(DoctorItem doctorItem) {
-        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-            switch (which){
-                case DialogInterface.BUTTON_POSITIVE:
-                    Intent i = new Intent(this, VideoCallActivity.class);
-                    startActivity(i);
-                    break;
-
-                case DialogInterface.BUTTON_NEGATIVE:
-                    //No button clicked
-                    break;
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Start a call?").setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
     }
 }

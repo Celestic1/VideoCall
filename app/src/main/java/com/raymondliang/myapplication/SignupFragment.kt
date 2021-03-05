@@ -23,7 +23,6 @@ class SignupFragment : Fragment(R.layout.fragment_signup) {
     private val url = "http://ip-api.com/json"
     private var mAuth: FirebaseAuth? = null
     private var location: String? = null
-    private var spinner: ProgressBar? = null
     // TODO: Unset this in onDestroyView or else memory leak
     private lateinit var binding: FragmentSignupBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,7 +47,6 @@ class SignupFragment : Fragment(R.layout.fragment_signup) {
     }
 
     fun signup() {
-        spinner!!.visibility = View.VISIBLE
         mAuth = FirebaseAuth.getInstance()
         val email = binding.regEmail.text.toString()
         val password = binding.regPassword.text.toString()
@@ -59,13 +57,11 @@ class SignupFragment : Fragment(R.layout.fragment_signup) {
                     if (task.isSuccessful()) {
                         // Sign in success
                         postUserData()
-                        spinner!!.visibility = View.GONE
                         Toast.makeText(this@SignupFragment.requireActivity(), "Registration Successful", Toast.LENGTH_LONG).show()
                         toLogin()
                     } else {
                         Toast.makeText(this@SignupFragment.requireActivity(), "User Authentication Failed: " + (task.exception?.message
                                 ?: "Unknown"), Toast.LENGTH_SHORT).show()
-                        spinner!!.visibility = View.GONE
                     }
                 }
     }

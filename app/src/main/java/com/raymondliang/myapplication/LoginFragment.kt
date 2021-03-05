@@ -33,14 +33,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             password = savedInstanceState.getString("UserPassword")
         }
         binding.newAccountLink.setOnClickListener {
-            findNavController().navigate(R.id.loginFragment)
+            findNavController().popBackStack()
+            findNavController().navigate(R.id.signupFragment)
         }
         loadingBar = ProgressDialog(requireActivity())
         binding.test.setOnClickListener {
             testLogin()
         }
         binding.buttonLogin.setOnClickListener {
-            findNavController().popBackStack()
             login()
         }
     }
@@ -123,6 +123,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             map["device_token"] = deviceToken
                             database!!.child("Users").child(currentUserId).updateChildren(map).addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
+                                    findNavController().popBackStack()
+                                    findNavController().popBackStack()
                                     findNavController().navigate(R.id.welcomeFragment)
                                     Toast.makeText(this@LoginFragment.requireActivity(), "Logged in", Toast.LENGTH_SHORT).show()
                                     loadingBar!!.dismiss()
