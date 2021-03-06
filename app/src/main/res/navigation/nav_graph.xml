@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    app:startDestination="@id/loginSignupFragment">
+    <fragment
+        android:id="@+id/loginSignupFragment"
+        android:name="com.raymondliang.myapplication.LoginSignupFragment"
+        tools:layout="@layout/fragment_login_signup" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.raymondliang.myapplication.LoginFragment"
+        tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.raymondliang.myapplication.SignupFragment"
+        tools:layout="@layout/fragment_signup" />
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.raymondliang.myapplication.WelcomeFragment"
+        tools:layout="@layout/fragment_welcome" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.raymondliang.myapplication.ProfileFragment"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/userListFragment"
+        android:name="com.raymondliang.myapplication.DoctorsListFragment"
+        tools:layout="@layout/fragment_user_list" />
+</navigation>
