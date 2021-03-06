@@ -1,3 +1,4 @@
 .idea/
 MyApplication.iml
 local.properties
+.gradle/
